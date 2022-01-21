@@ -16,18 +16,28 @@ class OrderBook{
     // check FOK
     // if its LO
 
+    // toString for TreeMap
     @Override
     public String toString(){
         StringBuilder toRet = new StringBuilder();
-        // Append to the return StringBuilder
         toRet.append("B: ");
-        for(int i = 0 ; i < buySide.size() ; i++){
-            toRet.append(buySide.get(i) + " ");
-        }
-        toRet.append("\nS: ");
-        for(int i = 0 ; i < sellSide.size() ; i++){
-            toRet.append(sellSide.get(i) + " ");
-        }
-        return toRet.append("\n").toString();
+
+
     }
+
+    // toString for ArrayList
+    // @Override
+    // public String toString(){
+    //     StringBuilder toRet = new StringBuilder();
+    //     // Append to the return StringBuilder
+    //     toRet.append("B: ");
+    //     for(int i = 0 ; i < buySide.size() ; i++){
+    //         toRet.append(buySide.get(i) + " ");
+    //     }
+    //     toRet.append("\nS: ");
+    //     for(int i = 0 ; i < sellSide.size() ; i++){
+    //         toRet.append(sellSide.get(i) + " ");
+    //     }
+    //     return toRet.append("\n").toString();
+    // }
 }
