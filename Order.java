@@ -1,15 +1,14 @@
-import java.util.Date;
-
-/*
- Abstract Order class, for which we only specify the implementation of toString, getters and setters
- This allows us to abstract away the Buy and Sell orders that extend this class.
-*/
 public class Order implements Comparable<Order> {
     private String orderId;
     private Side side;
     private int price;
+
+    // this quantity is the displaySize for IceBerg orders
     private int quantity;
     private long timeOrderPlaced;
+
+    // This is only assigned to a positive number in the case of ICE Orders
+    private int hiddenQty = -1;
 
     // Constructor for Limit Order
     public Order(Side side, String orderId, int price, int quantity) {
@@ -27,8 +26,24 @@ public class Order implements Comparable<Order> {
         this.side = side;
         this.orderId = orderId;
         this.quantity = quantity;
+        this.timeOrderPlaced = System.nanoTime();
+    }
 
-        // For this implementation of the matching engine we use the time the Order is received to know its ordering 
+    // Constructor for CRP
+    public Order(String orderId, int quantity, int price){
+        this.orderId = orderId;
+        this.quantity = quantity;
+        this.price = price;
+        this.timeOrderPlaced = System.nanoTime();
+    }
+
+    // Constructor for ICE
+    public Order(Side side, String orderId, int quantity, int price, int displaySize){
+        this.side = side;
+        this.orderId = orderId;
+        this.price = price;
+        this.quantity = quantity;
+        this.hiddenQty = hiddenQty;
         this.timeOrderPlaced = System.nanoTime();
     }
 
@@ -47,10 +62,7 @@ public class Order implements Comparable<Order> {
         } else {
             // Similar logic if the side is sell just with the opposite way of comparing price
             toRet = Integer.compare(this.getPrice(), otherOrder.getPrice());
-            // if price is the same, compare them by time of entry
             if (toRet == 0) {
-                // ordered earlier if this order was placed before the one we are comparing against
-                // we saved the order entered as a long, nanotime
                 return Long.compare(this.getTimeOrderPlaced(), otherOrder.getTimeOrderPlaced());
             }
             return toRet;
@@ -59,14 +71,19 @@ public class Order implements Comparable<Order> {
 
     @Override
     public String toString() {
-        return "'" + Integer.toString(quantity) + "@" + Integer.toString(price) + "#" + orderId + "'";
+        if (this.hiddenQty != -1){
+            return Integer.toString(quantity) + "(" + Integer.toString(hiddenQty) + ")" + "@" + Integer.toString(price) + "#" + orderId;
+        }
+        return Integer.toString(quantity) + "@" + Integer.toString(price) + "#" + orderId;
     }
 
-    // @Override
-    // public boolean equals(Object otherOrder){
-    //     return (otherOrder instanceof Order) && (this.compareTo((Order) otherOrder) == 0) 
-    //     && this.getSide() == ((Order) otherOrder).getSide() && this.getOrderId().compareTo(((Order) otherOrder).getOrderId()) == 0;
-    // }
+    @Override
+    public boolean equals(Object otherOrder){
+        return (otherOrder instanceof Order) 
+        && this.compareTo((Order) otherOrder) == 0
+        && this.getSide() == ((Order) otherOrder).getSide() 
+        && this.getOrderId().compareTo(((Order) otherOrder).getOrderId()) == 0;
+    }
 
     // Getters and Setters for the fields
     public String getOrderId() {
@@ -103,5 +120,9 @@ public class Order implements Comparable<Order> {
 
     public long getTimeOrderPlaced() {
         return this.timeOrderPlaced;
+    }
+
+    public void setTimeOrderPlaced(long timeOrderPlaced){
+        this.timeOrderPlaced = timeOrderPlaced;
     }
 }
