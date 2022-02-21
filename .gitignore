@@ -4,6 +4,8 @@
 # Exercise file
 .pdf
 
+.DS_Store
+
 # Log file
 *.log
 
